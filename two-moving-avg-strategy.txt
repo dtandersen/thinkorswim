@@ -1,0 +1,17 @@
+input price = close;
+input fastLength = 5;
+input slowLength = 13;
+input averageType = AverageType.EXPONENTIAL;
+input positionSize = .06;
+
+def capital = GetNetLiq() * positionSize;
+def maxShares = capital / close;
+
+plot FastMA = MovingAverage(averageType, price, fastLength);
+plot SlowMA = MovingAverage(averageType, price, slowLength);
+FastMA.SetDefaultColor(GetColor(1));
+SlowMA.SetDefaultColor(GetColor(2));
+
+AddOrder(OrderType.BUY_TO_OPEN, FastMA crosses above SlowMA, tradeSize = maxShares, tickcolor = GetColor(1), arrowcolor = GetColor(1), name = "BUY");
+
+AddOrder(OrderType.SELL_TO_CLOSE, FastMA crosses below SlowMA, tradeSize = maxShares, tickcolor = GetColor(2), arrowcolor = GetColor(2), name = "SELL");
